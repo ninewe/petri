@@ -398,15 +398,28 @@ function particle() {
             ctx.globalAlpha = 1.0;
             requestAnimationFrame(update);
         }
+
         let lastWidth = window.innerWidth;
         window.addEventListener('resize', () => {
             if (window.innerWidth !== lastWidth) {
+                const oldRadius = radius;
+                const oldCenterX = centerX;
+                const oldCenterY = centerY;
+                
                 lastWidth = window.innerWidth;
                 resizeCanvas();
-                particle();
+                
+                
+                const scale = radius / oldRadius;
+                particles.forEach(p => {
+                    const dx = p.x - oldCenterX;
+                    const dy = p.y - oldCenterY;
+                    p.x = centerX + dx * scale;
+                    p.y = centerY + dy * scale;
+                });
             }
         });
-        
+
         rule();
         particle();
         build();
