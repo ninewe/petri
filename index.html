@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>petri - Hackclub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      const ink       = { DEFAULT: '#2a2522', light: '#4a443f' };
+      const botanical = { DEFAULT: '#475e39', light: '#a3b18a', dark: '#2c3b24' };
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { ink, botanical },
+            fontFamily: {
+              font: ['"IBM Plex Mono"', 'monospace'],
+            },
+          }
+        }
+      }
+    </script>
+    <style>
+        body { color: #2a2522; }
+        .bg-graph-paper {
+            background-image: 
+                linear-gradient(to right, rgba(71, 94, 57, 0.07) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(71, 94, 57, 0.07) 1px, transparent 1px);
+            background-size: 24px 24px;
+            background-position: center top;
+        }
+        .textbook-border { border: 1px solid #2a2522; }
+        .textbook-border-thick { border: 2px solid #2a2522; }
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            background: transparent;
+            margin: 8px 0;
+        }
+        input[type=range]:focus { outline: none; }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 2px;
+            cursor: pointer;
+            background: #4a443f;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            height: 14px;
+            width: 8px;
+            background: #2a2522;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -6px;
+        }
+        input[type=range]::-moz-range-track {
+            width: 100%;
+            height: 2px;
+            background: #4a443f;
+        }
+        input[type=range]::-moz-range-thumb {
+            height: 14px;
+            width: 8px;
+            border: none;
+            background: #2a2522;
+            cursor: pointer;
+        }
+
+        .att::-webkit-scrollbar {width: 6px;}
+        .att::-webkit-scrollbar-track {background: rgba(42,37,34,0.1);}
+        .att::-webkit-scrollbar-thumb {background: #2a2522;}
+    </style>
+</head>
+
+<body class="font-font bg-graph-paper min-h-screen relative overflow-x-hidden selection:bg-botanical-light selection:text-ink">
+    <nav class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center relative z-10">
+        <img src="image.jpg" alt="petri logo" class="h-10 md:h-12 mb-4 object-contain">
+        <b>@ninew</b>
+        <div class="hidden md:flex space-x-6 text-sm uppercase tracking-widest">
+            <a href="#about" class="hover:text-botanical transition-colors">about</a>
+            <a href="https://rsvp.hackclub.community/petri" class="hover:text-botanical transition-colors">rsvp</a>
+        </div>
+    </nav>
+    <main class="max-w-5xl mx-auto px-6 pb-24 relative z-10">
+      <header class="pt-0 pb-12 md:pt-0 md:pb-12 border-b border-ink/20 flex flex-col md:flex-row gap-12 items-center md:items-start">
+       <div class="md:w-1/2 flex flex-col justify-center items-start text-left">
+                <img src="image.jpg" alt="petri logo" class="h-40 md:h-56 mb-8 mt-32 object-contain">
+            <p class="text-s mb-8 leading-relaxed">
+                   A YSWS program where you can create a life simulation with any rules you want.
+             </p>
+            <a href="https://rsvp.hackclub.community/petri" class="inline-block uppercase tracking-widest text-sm font-semibold px-8 py-4 textbook-border hover:-translate-y-0.5 transition-all text-ink hover:bg-botanical hover:text-white">
+                 rsvp
+            </a>
+        </div>
+        <div class="md:w-1/2 w-full flex flex-col gap-4">
+              <div class="relative mx-auto aspect-square w-full max-w-[420px] overflow-hidden rounded-full textbook-border-thick">
+              <canvas id="simCanvas" class="block h-full w-full cursor-crosshair"></canvas>
+            </div>
+              <div class="p-4 textbook-border flex flex-col font-font text-xs">
+                    <div class="uppercase tracking-widest font-bold border-b border-ink/20 pb-2 mb-3">
+                     Attraction
+                  </div>
+                 <div id="slider" class="space-y-3 overflow-y-auto att pr-3 flex-grow max-h-[160px]">
+                </div>
+                    <button id="randomize-btn" class="mt-4 w-full textbook-border px-4 py-2 hover:bg-ink hover:text-white transition-colors font-bold uppercase tracking-widest text-xs">
+                        Randomize DNA
+                    </button>
+                </div>
+            </div>
+        </header>
+        <section id="about" class="py-16">
+            <div class="flex flex-col md:flex-row gap-12 items-start">
+              <div class="md:w-1/3">
+                    <h2 class="text-3xl font-bold mb-4 font-font">about</h2>
+                 <p class="text-sm text-ink-light leading-relaxed p-4 textbook-border">
+                Your projects will be graded in tier by its complexity.
+                    </p>
+               </div>
+          <div class="md:w-2/3 text-lg text-ink leading-relaxed">
+                  <p class="text-xl">
+                    <b>petri</b> is a ysws event (not official yet) where you create your own life simulation. You make your own rules on how the world in your simulation goes. Algorithms and complex behaviours are the priority of this project. Graphics is secondary.
+                    </p>
+
+
+              <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                <div class="p-6 textbook-border">
+                <h3 class="font-bold text-base mb-2 font-font text-botanical">tier 1</h3>
+                      <p>3 bits/hour</p>
+                </div>
+
+                <div class="p-6 textbook-border">
+                  <h3 class="font-bold text-base mb-2 font-font text-botanical">tier 2</h3>
+                    <p>4 bits/hour</p>
+                </div>
+
+
+            <div class="p-6 textbook-border">
+                  <h3 class="font-bold text-base mb-2 font-font text-botanical">tier 3</h3>
+                   <p>5 bits/hour</p>
+            </div>
+
+
+             <div class="p-6 textbook-border">
+               <h3 class="font-bold text-base mb-2 font-font text-botanical">tier 4</h3>
+                  <p>7 bits/hour</p>
+            </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('slider');
+        const randBtn = document.getElementById('randomize-btn');
+        let width, height, centerX, centerY, radius;
+        function resizeCanvas() {
+            const size = canvas.offsetWidth;
+            width = size;
+            height = size;
+            centerX = width / 2;
+            centerY = height / 2;
+            radius = size / 2 - 5;
+            canvas.width = size;
+            canvas.height = size;
+        }
+        resizeCanvas();
+        const typeColors = {
+            'A': '#111111',
+            'B': '#ffb300',
+            'C': '#002bff',
+        };
+        const types = Object.keys(typeColors);
+        const targets = [...types, 'Wall'];
+        let rules = {};
+        let particles = [];
+        const particleAmt = 120;
+        const maxDist = 60;
+        const maxDistSq = maxDist * maxDist;
+        const respawnChance = 0.0015;
+        function rule() {
+            types.forEach(t1 => {
+                rules[t1] = {};
+                targets.forEach(t2 => {
+                    rules[t1][t2] = (Math.random() * 2 - 1);
+                });
+            });
+        }
+        function createParticle(t, state = 'alive') {
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.sqrt(Math.random()) * (radius - 10);
+            return {
+                x: centerX + Math.cos(angle) * distance,
+                y: centerY + Math.sin(angle) * distance,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                type: t,
+                life: state === 'spawning' ? 0 : 1,
+                state: state
+            };
+        }
+
+function particle() {
+            particles = [];
+            types.forEach(t => {
+                for (let i = 0; i < particleAmt; i++) {
+                    particles.push(createParticle(t));
+                }
+            });
+ }
+
+ function build() {
+    container.innerHTML = '';
+    container.className = 'grid grid-cols-3 gap-x-4 gap-y-3';
+
+    targets.forEach(t2 => {
+        types.forEach(t1 => {
+            const row = document.createElement('div');
+            row.className = 'flex flex-col';
+
+            const label = document.createElement('div');
+            label.className = 'flex justify-between items-center mb-1';
+
+            let targetIcon = '';
+
+            if (t2 === 'Wall') {
+                targetIcon =
+                    '<span class="text-xs font-bold leading-none">Wall</span>';
+            } else {
+                targetIcon =
+                    '<span class="inline-block w-2 h-2 rounded-full" style="background:' +
+                    typeColors[t2] +
+                    '"></span>';
+            }
+
+            let innerHTML = '';
+
+            innerHTML += '<div class="flex items-center gap-1">';
+            innerHTML +=
+                '<span class="inline-block w-2 h-2 rounded-full" style="background:' +
+                typeColors[t1] +
+                '"></span>';
+            innerHTML += '<span class="text-xs">&times;</span>';
+            innerHTML += targetIcon;
+            innerHTML += '</div>';
+
+            innerHTML +=
+                '<span id="val-' +
+                t1 +
+                '-' +
+                t2 +
+                '" class="text-xs text-ink-light">' +
+                rules[t1][t2].toFixed(2) +
+                '</span>';
+
+            label.innerHTML = innerHTML;
+
+            const slider = document.createElement('input');
+            slider.type = 'range';
+            slider.min = '-100';
+            slider.max = '100';
+            slider.value = rules[t1][t2] * 100;
+            slider.id = `slider-${t1}-${t2}`;
+
+            slider.addEventListener('input', e => {
+                const val = parseInt(e.target.value) / 100;
+
+                rules[t1][t2] = val;
+
+                document.getElementById(
+                    `val-${t1}-${t2}`
+                ).innerText = val.toFixed(2);
+            });
+
+            row.appendChild(label);
+            row.appendChild(slider);
+            container.appendChild(row);
+        });
+    });
+}
+
+        function updateUI() {
+            targets.forEach(t2 => {
+                types.forEach(t1 => {
+                    const val = rules[t1][t2];
+                    document.getElementById(`slider-${t1}-${t2}`).value = val * 100;
+                    document.getElementById(`val-${t1}-${t2}`).innerText = val.toFixed(2);
+          });
+     });
+ }
+        function update() {
+            ctx.clearRect(0, 0, width, height);
+            for (let i = 0; i < particles.length; i++) {
+                let p1 = particles[i];
+                if (p1.state === 'alive' && Math.random() < respawnChance) {
+                    p1.state = 'dying';
+                }
+               if (p1.state === 'dying') {
+                  p1.life -= 0.05;
+                 if (p1.life <= 0) {
+                      const newP = createParticle(p1.type, 'spawning');
+                      Object.assign(p1, newP);
+                }
+            } else if (p1.state === 'spawning') {
+                 p1.life += 0.05;
+            if (p1.life >= 1) {
+                        p1.life = 1;
+                       p1.state = 'alive';
+                }
+            }
+               if (p1.life < 0.1) continue;
+              let fx = 0;
+              let fy = 0;
+
+       for (let j = 0; j < particles.length; j++) {
+       if (i !== j) {
+        let p2 = particles[j];
+        if (p2.life >= 0.1) {
+            let dx = p1.x - p2.x;
+            let dy = p1.y - p2.y;
+            let distSq = dx * dx + dy * dy;
+            if (distSq > 0 && distSq < maxDistSq) {
+                let dist = Math.sqrt(distSq);
+                let force = rules[p1.type][p2.type];
+                if (dist < 10) {
+                    force = -1.2 * (1 - dist / 10);
+                } else {
+                    force = force * (1 - Math.abs(dist - 35) / 25);
+                }
+                fx = fx - (force * dx / dist);
+                fy = fy - (force * dy / dist);
+            }
+        }
+      }
+      }
+
+                const xD_force = p1.x-centerX;
+                const yD_force = p1.y-centerY;
+                const centerDistSq = xD_force * xD_force + yD_force * yD_force;
+                const centerD_force = Math.sqrt(centerDistSq);
+                if (centerD_force > 0) {
+                    let distToWall = radius - centerD_force;
+                     if (distToWall > 0) {
+               if (distToWall < maxDist) {
+                 let type = p1.type;
+                 let rule = rules[type];
+                 let wForce = rule['Wall'];
+    
+                 let percent = distToWall / maxDist;
+                 let forceFactor = 1 - percent;
+                 wForce = wForce * forceFactor;
+    
+                 let nx = xD_force / centerD_force;
+                 let ny = yD_force / centerD_force;
+    
+                 let changeX = wForce * nx;
+                 let changeY = wForce * ny;
+    
+                 fx = fx + changeX;
+                 fy = fy + changeY;
+               }
+             }
+
+                }
+                p1.vx = (p1.vx + fx) * 0.5;
+                p1.vy = (p1.vy + fy) * 0.5;
+                const speedSq = p1.vx * p1.vx + p1.vy * p1.vy;
+                if (speedSq > 64) {
+                    const speed = Math.sqrt(speedSq);
+                    p1.vx = (p1.vx / speed) * 8;
+                    p1.vy = (p1.vy / speed) * 8;
+                }
+                p1.x += p1.vx;
+                p1.y += p1.vy;
+                const xD = p1.x-centerX;
+                const yD = p1.y-centerY;
+                const centerD = Math.sqrt(xD * xD + yD * yD);
+                if (centerD > radius - 3) {
+                    const normalX = xD / centerD;
+                    const normalY = yD / centerD;
+                    p1.x = centerX + normalX * (radius - 3);
+                    p1.y = centerY + normalY * (radius - 3);
+                    const normalV = p1.vx * normalX + p1.vy * normalY;
+                    p1.vx -= 2 * normalV * normalX;
+                    p1.vy -= 2 * normalV * normalY;
+                }
+                ctx.globalAlpha = p1.life;
+                ctx.fillStyle = typeColors[p1.type];
+                ctx.beginPath();
+                ctx.arc(p1.x, p1.y, 2.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1.0;
+            requestAnimationFrame(update);
+        }
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            particle();
+        });
+        rule();
+        particle();
+        build();
+        update();
+        randBtn.addEventListener('click', () => {
+            rule();
+            updateUI();
+        });
+    </script>
+</body>
+</html>
