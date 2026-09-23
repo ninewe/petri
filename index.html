@@ -398,10 +398,15 @@ function particle() {
             ctx.globalAlpha = 1.0;
             requestAnimationFrame(update);
         }
+        let lastWidth = window.innerWidth;
         window.addEventListener('resize', () => {
-            resizeCanvas();
-            particle();
+            if (window.innerWidth !== lastWidth) {
+                lastWidth = window.innerWidth;
+                resizeCanvas();
+                particle();
+            }
         });
+        
         rule();
         particle();
         build();
